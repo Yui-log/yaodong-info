@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>窑洞：生长在黄土里的建筑 | 图文数据可视化</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/echarts@4.9.0/dist/echarts.min.js"></script>
+ 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #fbf7e9;
+            font-family: 'Segoe UI', 'Roboto', 'Noto Sans', system-ui, -apple-system, 'Microsoft YaHei', serif;
+            color: #3e2a1f;
+            line-height: 1.5;
+            padding: 2rem 1.5rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* 页眉 */
+        .hero {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            border-bottom: 2px solid #d9b48b;
+            width: 100%;
+        }
+        .hero h1 {
+            font-size: 2.8rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #b97f3a, #6b3f1c);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            text-shadow: 2px 2px 8px rgba(100, 60, 10, 0.1);
+            margin-bottom: 0.5rem;
+        }
+        .hero p {
+            font-size: 1.1rem;
+            color: #7a5a3e;
+            margin-bottom: 1rem;
+            font-style: italic;
+        }
+        .sub {
+            font-size: 0.9rem;
+            color: #a77f55;
+            border-top: 1px dashed #e2cfb3;
+            display: inline-block;
+            padding-top: 0.5rem;
+        }
+
+        /* 主网格：左侧信息/图片 + 右侧气候/图片 */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        /* 卡片通用样式 */
+        .card {
+            background: rgba(255, 252, 240, 0.92);
+            border-radius: 2rem;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.02);
+            padding: 1.6rem 2rem;
+            transition: transform 0.2s ease, box-shadow 0.2s;
+            border: 1px solid #f0e1cd;
+            margin-bottom: 1.8rem;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 30px -12px rgba(70, 40, 20, 0.2);
+        }
+
+        h2 {
+            font-size: 1.7rem;
+            font-weight: 500;
+            border-left: 6px solid #c28a4e;
+            padding-left: 1rem;
+            margin-bottom: 1.2rem;
+            color: #4f2d14;
+        }
+        h2 i {
+            margin-right: 0.5rem;
+            color: #b97f3a;
+        }
+
+        /* 基本信息网格 */
+        .info-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+            border-bottom: 1px dashed #eedbc8;
+            padding-bottom: 0.7rem;
+        }
+        .info-icon {
+            font-size: 1.4rem;
+            color: #c28a4e;
+            min-width: 2rem;
+            text-align: center;
+        }
+        .info-text strong {
+            color: #a35c2a;
+        }
+
+        /* 引用区块 */
+        .quote-block {
+            background: #f9efdf;
+            padding: 1rem 1.5rem;
+            border-radius: 1.5rem;
+            margin-top: 1rem;
+            border-left: 8px solid #b87c3a;
+        }
+        .quote-text {
+            font-size: 0.95rem;
+            line-height: 1.45;
+            color: #4a2e18;
+        }
+        .quote-author {
+            text-align: right;
+            font-size: 0.8rem;
+            color: #8b6946;
+            margin-top: 0.5rem;
+            border-top: 1px solid #e2cdb0;
+            padding-top: 0.4rem;
+        }
+        .book-list {
+            list-style: none;
+            margin-top: 1rem;
+        }
+        .book-list li {
+            margin-bottom: 0.6rem;
+            font-size: 0.9rem;
+            display: flex;
+            gap: 0.6rem;
+        }
+        .book-list li i {
+            color: #b87c3a;
+            width: 1.4rem;
+        }
+
+        /* 图片预留区域公用样式 */
+        .img-placeholder-grid, .gallery-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+            margin-top: 1rem;
+        }
+        .img-card, .gallery-item, .thermal-diagram {
+            background: #f5ecdf;
+            border-radius: 1.2rem;
+            padding: 1rem;
+            text-align: center;
+            flex: 1 1 160px;
+            border: 2px dashed #c9aa82;
+            transition: 0.2s;
+            color: #8b6946;
+        }
+        .img-card i, .gallery-item i {
+            color: #b3804a;
+            margin-bottom: 0.5rem;
+        }
+        .img-card span, .gallery-label {
+            display: block;
+            font-weight: 600;
+            margin: 0.5rem 0 0.2rem;
+        }
+        .img-note {
+            font-size: 0.7rem;
+            color: #a77f55;
+        }
+        .img-placeholder-title {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        /* 热工原理预留区 */
+        .thermal-placeholder {
+            background: #f5ecdf;
+            border-radius: 1.2rem;
+            padding: 1rem;
+            text-align: center;
+            border: 2px dashed #b3804a;
+        }
+        .thermal-diagram {
+            border: none;
+            background: #e9dbc9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .thermal-text {
+            text-align: left;
+            font-size: 0.85rem;
+        }
+        .img-tip {
+            font-size: 0.7rem;
+            margin-top: 0.8rem;
+            color: #a77f55;
+            background: #fff1e0;
+            padding: 0.3rem 0.8rem;
+            border-radius: 30px;
+            display: inline-block;
+        }
+
+        /* 气候图表样式 */
+        .chart-container {
+            width: 100%;
+            height: 340px;
+            margin: 0.5rem 0;
+        }
+        
+        /* 地图容器样式 - 新增 */
+        .map-container {
+            width: 100%;
+            height: 400px;
+            margin: 0.5rem 0;
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+        
+        .climate-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            background: #f5ecdf;
+            padding: 0.7rem 1rem;
+            border-radius: 1.2rem;
+            margin-bottom: 0.8rem;
+        }
+        .stat-badge {
+            background: white;
+            padding: 0.2rem 0.8rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+        }
+        .data-source {
+            font-size: 0.7rem;
+            text-align: right;
+            color: #9b7b5c;
+            border-top: 1px solid #eedbc8;
+            padding-top: 0.5rem;
+            margin-top: 0.3rem;
+        }
+
+        /* 地图图例样式 - 新增 */
+        .map-legend {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            padding: 0.5rem 0;
+            margin-top: 0.5rem;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: #5a3f28;
+        }
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+        .legend-color.highlight {
+            background: #c4452c;
+            border: 1px solid #a2351f;
+        }
+        .legend-color.normal {
+            background: #f4f7fb;
+            border: 1px solid #dce3ec;
+        }
+
+        /* 底部 */
+        .footer-note {
+            margin-top: 2rem;
+            background: #e7d9c8;
+            border-radius: 1.5rem;
+            padding: 1rem 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: #5a3f28;
+            gap: 0.5rem;
+        }
+
+        @media (max-width: 850px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            .hero h1 {
+                font-size: 2rem;
+            }
+            body {
+                padding: 1rem;
+            }
+            .map-container {
+                height: 350px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+
+    <header class="hero">
+        <h1>🏜️ 窑洞：生长在黄土里的建筑</h1>
+        <p>穴居千年 · 冬暖夏凉 · 黄土高原的生态智慧</p>
+        <div class="sub"><i class="fas fa-map-marker-alt"></i> 黄土台塬 · 靠崖式 | 下沉式 | 独立式</div>
+    </header>
+
+    <section class="dashboard">
+        <!-- 左侧区域：基本信息、书籍引用、书籍影像预留、三种窑洞类型照片 -->
+        <div class="left-panel">
+            <div class="card">
+                <h2><i class="fas fa-camera-retro"></i> 窑洞三大类型 </h2>
+                <div class="gallery-grid">
+                    <div class="gallery-item">
+                       <img src="images/kaoya.jpeg" alt="靠崖式窑洞" 
+                            style="width:100%; height:140px; object-fit:cover; border-radius:0.8rem;">
+                        <div class="gallery-label"> 靠崖式窑洞</div>
+                        <div class="img-note">·依山开凿，层次分明</div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="images/xiachen.jpeg" alt="下沉式窑洞"  
+                            style="width:100%; height:140px; object-fit:cover; border-radius:0.8rem;">
+                        <div class="gallery-label"> 下沉式窑洞 (地坑院)</div>
+                        <div class="img-note">·地下四合院奇观</div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="images/duli.jpeg" alt="独立式窑洞" 
+                            style="width:100%; height:140px; object-fit:cover; border-radius:0.8rem;">
+                        <div class="gallery-label"> 独立式锢窑</div>
+                        <div class="img-note">·砖石拱券，仿窑形态</div>
+                    </div>
+                </div>
+                <p class="img-tip"><i class="fas fa-info-circle"></i> 提示：图片来源于网络。</p>
+            </div>
+            
+            <!-- 基本信息卡片 -->
+            <div class="card">
+                <h2><i class="fas fa-archway"></i> 窑洞·基本档案</h2>
+                <div class="info-grid">
+                    <div class="info-item"><div class="info-icon"><i class="fas fa-globe-asia"></i></div><div class="info-text"><strong>分布区域</strong> — 陕西、山西、甘肃、宁夏、河南西部、河北北部，黄土高原核心地带。</div></div>
+                    <div class="info-item"><div class="info-icon"><i class="fas fa-temperature-high"></i></div><div class="info-text"><strong>热工性能</strong> — 黄土墙体厚1~3米，热惰性极佳，室内年均温差仅8~12℃，冬暖夏凉。</div></div>
+                    <div class="info-item"><div class="info-icon"><i class="fas fa-ruler-combined"></i></div><div class="info-text"><strong>典型形制</strong> — 靠崖窑、下沉式窑洞（地坑院）、独立式锢窑（砖石拱券）。</div></div>
+                    <div class="info-item"><div class="info-icon"><i class="fas fa-seedling"></i></div><div class="info-text"><strong>生态优势</strong> — 不占用耕地，就地取材，碳排放极低，绿色建筑活化石。</div></div>
+                    <div class="info-item"><div class="info-icon"><i class="fas fa-rainbow"></i></div><div class="info-text"><strong>文化价值</strong> — "窑洞营造技艺"列入国家级非物质文化遗产扩展项目。</div></div>
+                </div>
+            </div>
+
+           
+   <!-- 书籍/文献引用  -->
+        <div class="card">
+         <h2><i class="fas fa-book-open"></i> 文献&书籍引用</h2>
+    <div class="quote-block">
+        <div class="quote-text">“窑洞不仅是黄土高原的民间建筑，更是中国传统建筑文化的重要组成部分。其营造技艺和聚落形态，体现了人与自然和谐共生的生存智慧。”</div>
+        <div class="quote-author">—— 侯继尧 等《窑洞民居》（中国建筑工业出版社，1989）</div>
+    </div>
+    <div class="quote-block">
+        <div class="quote-text">“下沉式窑洞（地坑院）是黄土高原最具生态智慧的一种聚落形态，‘进村不见房，闻声不见人’，是人类利用地形与气候的杰出范例，但其在当代的发展与保护也面临着诸多困境。”</div>
+        <div class="quote-author">—— 刘海宁《下沉式窑居村落之现状调研与发展展望》（西安建筑科技大学硕士论文，2001）</div>
+    </div>
+    <ul class="book-list">
+        <li><i class="fas fa-quote-right"></i> <strong>《中国窑洞》</strong> · 侯继尧、王军 </li>
+        <li><i class="fas fa-quote-right"></i> <strong>《山西传统窑洞的类型分布与影响因素研究》</strong> · 田毅, 李若彤 / 2025，基于GIS技术解析窑洞分布与自然环境、人文社会的关系。</li>
+        <li><i class="fas fa-database"></i> <strong>“陕北窑洞营造技艺”</strong> · 2026年列入陕西省第八批省级非物质文化遗产代表性项目名录。</li>
+    </ul>
+    
+</div>         
+
+        </div>
+
+        <!-- 右侧区域：气候图表 + 地图卡片 + 降雨季节饼图 -->
+        <div class="right-panel">
+            <!-- 气候数据双轴图表 -->
+            <div class="card">
+                <h2><i class="fas fa-chart-line"></i> 黄土高原·气候数据洞察</h2>
+                <div class="climate-stats">
+                    <span class="stat-badge"><i class="fas fa-tint"></i> 年均降雨量: 420~650mm</span>
+                    <span class="stat-badge"><i class="fas fa-temperature-low"></i> 冬季均温: -8℃ ~ 0℃</span>
+                    <span class="stat-badge"><i class="fas fa-temperature-high"></i> 夏季均温: 22℃ ~ 28℃</span>
+                    <span class="stat-badge"><i class="fas fa-cloud-rain"></i> 蒸降比 > 1.5</span>
+                </div>
+                <div id="climateChart" class="chart-container"></div>
+                <div class="data-source">
+                    <i class="fas fa-database"></i> 数据来源：中国气象局国家气候中心（CMA）延安站及榆林站1981–2010年标准气候值 + WMO。
+                </div>
+                <p style="font-size: 0.75rem; background: #faf1e2; border-radius: 1rem; padding: 0.3rem 0.8rem; margin-top: 0.5rem;">
+                    窑洞适应性：降雨集中于夏季，窑顶防渗与院内集水传统；冬季严寒，厚黄土层提供绝佳保温蓄热。
+                </p>
+            </div>
+
+            <!-- ★ 地图卡片 - 整合自 dstest1.html 的极简地图 ★ -->
+            <div class="card">
+                <h2><i class="fas fa-map-marked-alt"></i> 窑洞分布区域</h2>
+                <div id="caveMapContainer" class="map-container"></div>
+                <div class="map-legend">
+                    <div class="legend-item">
+                        <div class="legend-color highlight"></div>
+                        <span>窑洞典型分布省份</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color normal"></div>
+                        <span>其他区域</span>
+                    </div>
+                </div>
+                <div class="data-source">
+                    <i class="fas fa-map"></i> 数据来源：基于国家基础地理信息中心数据 | 审图号：GS（2024）0650号
+
+                </div>
+            </div>
+
+            <!-- 降雨季节分配饼图 -->
+            <div class="card">
+                <h2><i class="fas fa-chart-pie"></i> 窑居区降雨季节分配</h2>
+                <div id="seasonalRainChart" style="height: 260px; width: 100%;"></div>
+                <div class="data-source">
+                    <i class="fas fa-cloud-sun-rain"></i> 数据基于黄土高原水资源公报 / 陕西气象局，夏季(6-8月)降水占全年55%以上。
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 底部声明 -->
+    <div class="footer-note">
+        <span><i class="fas fa-check-circle"></i> 气候数据源：中国气象数据网 data.cma.cn | 世界银行气候知识门户</span>
+        <span><i class="fas fa-map"></i> 窑洞信息参考：《中国民居建筑》《黄土建筑与村落》及CNKI学术论文</span>
+        <span><i class="fas fa-chart-line"></i> 可视化基于真实历史气候统计，体现干燥半干旱区特征</span>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // 等待 DOM 加载完成
+        window.addEventListener('load', function() {
+            
+            // ========== 1. 气候图表 ==========
+            var months = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+            var monthlyRain = [4.5, 6.8, 15.2, 28.5, 48.2, 68.5, 112.3, 103.7, 72.5, 38.4, 14.2, 3.9];
+            var monthlyTemp = [-5.2, -1.8, 4.6, 12.1, 17.8, 22.3, 24.5, 23.1, 17.5, 10.6, 2.9, -3.4];
+            
+            var mainChart = echarts.init(document.getElementById('climateChart'));
+            var mainOption = {
+                title: { text: '📊 典型窑洞区气候月变化', left: 'center', textStyle: { fontSize: 13, color: '#6b4c2c' }, top: 0 },
+                tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+                legend: { data: ['月平均降雨量 (mm)', '月平均气温 (℃)'], left: 'left', textStyle: { color: '#3e2a1f' } },
+                xAxis: { type: 'category', data: months, axisLabel: { rotate: 30, color: '#795d3c' }, axisLine: { lineStyle: { color: '#be8a60' } } },
+                yAxis: [
+                    { type: 'value', name: '降雨量 (mm)', nameTextStyle: { color: '#2c6e6b' }, axisLabel: { color: '#2c6e6b' }, splitLine: { lineStyle: { type: 'dashed', color: '#e3cfb5' } } },
+                    { type: 'value', name: '气温 (℃)', nameTextStyle: { color: '#c95a2e' }, axisLabel: { color: '#c95a2e' }, splitLine: { show: false } }
+                ],
+                series: [
+                    { name: '月平均降雨量 (mm)', type: 'bar', barWidth: '50%', data: monthlyRain, itemStyle: { borderRadius: [6,6,0,0], color: '#5f9e8e' }, yAxisIndex: 0 },
+                    { name: '月平均气温 (℃)', type: 'line', smooth: true, symbol: 'circle', symbolSize: 7, lineStyle: { width: 3, color: '#e28743' }, data: monthlyTemp, yAxisIndex: 1, itemStyle: { color: '#e06c2e' }, label: { show: true, position: 'top', fontSize: 10, color: '#ad5a2e' } }
+                ],
+                grid: { containLabel: true, top: 50, bottom: 15, left: 55, right: 55 }
+            };
+            mainChart.setOption(mainOption);
+            
+            // ========== 2. 季节降雨饼图 ==========
+            let spring = monthlyRain[2] + monthlyRain[3] + monthlyRain[4];
+            let summer = monthlyRain[5] + monthlyRain[6] + monthlyRain[7];
+            let autumn = monthlyRain[8] + monthlyRain[9] + monthlyRain[10];
+            let winter = monthlyRain[11] + monthlyRain[0] + monthlyRain[1];
+            var seasonalData = [
+                { name: '春季 (3-5月)', value: spring, itemStyle: { color: '#a4c98e' } },
+                { name: '夏季 (6-8月)', value: summer, itemStyle: { color: '#e6b17e' } },
+                { name: '秋季 (9-11月)', value: autumn, itemStyle: { color: '#c9ae74' } },
+                { name: '冬季 (12-2月)', value: winter, itemStyle: { color: '#b0c4de' } }
+            ];
+            var pieChart = echarts.init(document.getElementById('seasonalRainChart'));
+            var pieOption = {
+                tooltip: { trigger: 'item', formatter: '{b}: {d}% ({c} mm)' },
+                legend: { orient: 'vertical', left: 'left', textStyle: { color: '#5a3f28' } },
+                series: [{
+                    type: 'pie', radius: '55%', center: ['50%', '55%'], data: seasonalData,
+                    label: { show: true, formatter: '{b}\n{d}%', fontSize: 11, color: '#4b3621' },
+                    emphasis: { scale: true }, labelLine: { length: 8, length2: 10 }
+                }],
+                graphic: [{ type: 'text', left: 'center', top: 10, style: { text: '降雨季节集中度 🌧️', fill: '#7a5a42', fontSize: 13, fontWeight: 'bold' }, z: 100 }]
+            };
+            pieChart.setOption(pieOption);
+            
+            // ========== 3. 极简地图 - 整合自 dstest1.html ==========
+            initCaveMap();
+            
+            function initCaveMap() {
+                const mapDom = document.getElementById('caveMapContainer');
+                if (!mapDom) {
+                    console.error('未找到地图容器 #caveMapContainer');
+                    return;
+                }
+                
+                // 窑洞核心省份
+                const CAVE_PROVINCES = ["山西省", "陕西省", "河南省", "甘肃省"];
+                const HIGHLIGHT_COLOR = '#c4452c';
+                const HIGHLIGHT_BORDER = '#a2351f';
+                const NORMAL_AREA_COLOR = '#f4f7fb';
+                const NORMAL_BORDER = '#dce3ec';
+                
+                const chart = echarts.init(mapDom);
+                
+                // 备用 GeoJSON 源
+                const primaryGeoJsonUrl = 'https://cdn.jsdelivr.net/npm/china-geojson@1.0.0/china.geo.json';
+                const fallbackGeoJsonUrl = 'https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json';
+                let retryCount = 0;
+                
+                function loadAndRenderMap(url) {
+                    fetch(url)
+                        .then(response => {
+                            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                            return response.json();
+                        })
+                        .then(geoJson => {
+                            echarts.registerMap('customChinaMap', geoJson);
+                            renderMap('customChinaMap');
+                        })
+                        .catch(err => {
+                            console.warn('地图数据加载失败，尝试备用源...', err);
+                            if (retryCount === 0) {
+                                retryCount++;
+                                loadAndRenderMap(fallbackGeoJsonUrl);
+                            } else {
+                                mapDom.innerHTML = `
+                                    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;background:#faf9f7;border-radius:24px;text-align:center;padding:1.5rem;">
+                                        <i class="fas fa-draw-polygon" style="font-size:48px;color:#c68b5e;opacity:0.6;margin-bottom:12px;"></i>
+                                        <p style="color:#8d7a66;font-size:0.9rem;">地图数据加载失败<br>请检查网络后刷新</p>
+                                        <p style="font-size:0.7rem;color:#b2906e;margin-top:8px;">窑洞核心省份: 山西、陕西、河南、甘肃</p>
+                                    </div>
+                                `;
+                            }
+                        });
+                }
+                
+                function renderMap(mapName) {
+                    const fullNames = [
+                        { full: '山西省', short: '山西' },
+                        { full: '陕西省', short: '陕西' },
+                        { full: '河南省', short: '河南' },
+                        { full: '甘肃省', short: '甘肃' }
+                    ];
+                    
+                    const seriesData = [];
+                    fullNames.forEach(prov => {
+                        seriesData.push({
+                            name: prov.full,
+                            value: 1,
+                            itemStyle: { areaColor: HIGHLIGHT_COLOR, borderColor: HIGHLIGHT_BORDER, borderWidth: 1.2 },
+                            label: { show: true, color: '#ffffff', fontWeight: 'bold', fontSize: 11, formatter: prov.short, offset: [0, 0] }
+                        });
+                        seriesData.push({
+                            name: prov.short,
+                            value: 1,
+                            itemStyle: { areaColor: HIGHLIGHT_COLOR, borderColor: HIGHLIGHT_BORDER, borderWidth: 1.2 },
+                            label: { show: true, color: '#ffffff', fontWeight: 'bold', fontSize: 11, formatter: prov.short }
+                        });
+                    });
+                    
+                    const option = {
+                        title: { show: false },
+                        tooltip: {
+                            trigger: 'item',
+                            backgroundColor: 'rgba(255, 248, 235, 0.96)',
+                            borderColor: '#d9b48b',
+                            borderWidth: 0.8,
+                            textStyle: { color: '#4f2d14', fontSize: 12 },
+                            formatter: function(params) {
+                                const name = params.name;
+                                const isCave = fullNames.some(p => name === p.full || name === p.short);
+                                if (isCave) {
+                                    return `<strong>📍 ${name}</strong><br/>🏺 窑洞传统分布区<br/>靠崖窑 · 地坑院 · 独立式锢窑`;
+                                }
+                                return name;
+                            }
+                        },
+                        series: [{
+                            name: '窑洞分布地图',
+                            type: 'map',
+                            map: mapName,
+                            roam: false,
+                            zoom: 1.18,
+                            center: [104.0, 35.6],
+                            itemStyle: {
+                                normal: {
+                                    areaColor: NORMAL_AREA_COLOR,
+                                    borderColor: NORMAL_BORDER,
+                                    borderWidth: 0.8,
+                                    shadowBlur: 0,
+                                    opacity: 0.98
+                                },
+                                emphasis: {
+                                    areaColor: '#f9e5d4',
+                                    borderWidth: 1.2,
+                                    borderColor: '#bb7a56',
+                                    label: { show: true, color: '#5d3a2a', fontWeight: '500', fontSize: 11 }
+                                }
+                            },
+                            data: seriesData,
+                            label: {
+                                normal: { show: false },
+                                emphasis: { show: true, fontSize: 11, color: '#2c1a0c' }
+                            }
+                        }],
+                        backgroundColor: 'transparent'
+                    };
+                    
+                    chart.setOption(option, true);
+                    chart.resize();
+                    
+                    chart.off('click');
+                    chart.on('click', function(params) {
+                        if (params.componentType === 'series' && params.name) {
+                            const provName = params.name;
+                            const isCaveProvince = fullNames.some(p => provName === p.full || provName === p.short);
+                            if (isCaveProvince) {
+                                console.log(`🏺 窑洞文化区: ${provName}`);
+                            }
+                        }
+                    });
+                }
+                
+                loadAndRenderMap(primaryGeoJsonUrl);
+                
+                // 保存地图实例以便 resize
+                window._caveMapChart = chart;
+            }
+
+            // ========== 窗口自适应 ==========
+            window.addEventListener('resize', function() {
+                if (mainChart && !mainChart.isDisposed()) mainChart.resize();
+                if (pieChart && !pieChart.isDisposed()) pieChart.resize();
+                if (window._caveMapChart && !window._caveMapChart.isDisposed()) {
+                    window._caveMapChart.resize();
+                }
+            });
+            
+            setTimeout(() => {
+                if (window._caveMapChart && !window._caveMapChart.isDisposed()) {
+                    window._caveMapChart.resize();
+                }
+            }, 200);
+
+            // ========== 页脚年份动态 ==========
+            let year = new Date().getFullYear();
+            let footerNote = document.querySelector('.footer-note');
+            if (footerNote) {
+                let yearSpan = document.createElement('span');
+                yearSpan.innerHTML = `<i class="far fa-calendar-alt"></i> 数据可视化 · 窑洞气候适应性展示 ${year}`;
+                footerNote.appendChild(yearSpan);
+            }
+            
+            console.log('窑洞可视化已加载，地图整合完成。');
+        });
+    })();
+</script>
+
+</body>
+</html>
