@@ -466,7 +466,7 @@
             
             var mainChart = echarts.init(document.getElementById('climateChart'));
             var mainOption = {
-                title: { text: '📊 典型窑洞区气候月变化', left: 'center', textStyle: { fontSize: 13, color: '#6b4c2c' }, top: 0 },
+                title: { text: '', left: 'center', textStyle: { fontSize: 13, color: '#6b4c2c' }, top: 0 },
                 tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
                 legend: { data: ['月平均降雨量 (mm)', '月平均气温 (℃)'], left: 'left', textStyle: { color: '#3e2a1f' } },
                 xAxis: { type: 'category', data: months, axisLabel: { rotate: 30, color: '#795d3c' }, axisLine: { lineStyle: { color: '#be8a60' } } },
