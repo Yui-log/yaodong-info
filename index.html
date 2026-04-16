@@ -502,7 +502,7 @@
                     label: { show: true, formatter: '{b}\n{d}%', fontSize: 11, color: '#4b3621' },
                     emphasis: { scale: true }, labelLine: { length: 8, length2: 10 }
                 }],
-                graphic: [{ type: 'text', left: 'center', top: 10, style: { text: '降雨季节集中度 🌧️', fill: '#7a5a42', fontSize: 13, fontWeight: 'bold' }, z: 100 }]
+                graphic: [{ type: 'text', left: 'center', top: 10, style: { text: '降雨季节集中度 ', fill: '#7a5a42', fontSize: 13, fontWeight: 'bold' }, z: 100 }]
             };
             pieChart.setOption(pieOption);
             
@@ -595,7 +595,7 @@
                                 const name = params.name;
                                 const isCave = fullNames.some(p => name === p.full || name === p.short);
                                 if (isCave) {
-                                    return `<strong>📍 ${name}</strong><br/>🏺 窑洞传统分布区<br/>靠崖窑 · 地坑院 · 独立式锢窑`;
+                                    return `<strong> ${name}</strong><br/> 窑洞传统分布区<br/>靠崖窑 · 地坑院 · 独立式锢窑`;
                                 }
                                 return name;
                             }
