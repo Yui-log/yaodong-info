@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -466,7 +467,7 @@
             
             var mainChart = echarts.init(document.getElementById('climateChart'));
             var mainOption = {
-                title: { text: '', left: 'center', textStyle: { fontSize: 13, color: '#6b4c2c' }, top: 0 },
+                title: { text: '📊 典型窑洞区气候月变化', left: 'center', textStyle: { fontSize: 13, color: '#6b4c2c' }, top: 0 },
                 tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
                 legend: { data: ['月平均降雨量 (mm)', '月平均气温 (℃)'], left: 'left', textStyle: { color: '#3e2a1f' } },
                 xAxis: { type: 'category', data: months, axisLabel: { rotate: 30, color: '#795d3c' }, axisLine: { lineStyle: { color: '#be8a60' } } },
@@ -516,8 +517,6 @@
                     return;
                 }
                 
-                // 窑洞核心省份
-                const CAVE_PROVINCES = ["山西省", "陕西省", "河南省", "甘肃省"];
                 const HIGHLIGHT_COLOR = '#c4452c';
                 const HIGHLIGHT_BORDER = '#a2351f';
                 const NORMAL_AREA_COLOR = '#f4f7fb';
@@ -525,35 +524,39 @@
                 
                 const chart = echarts.init(mapDom);
                 
-                // 备用 GeoJSON 源
-                const primaryGeoJsonUrl = 'https://cdn.jsdelivr.net/npm/china-geojson@1.0.0/china.geo.json';
-                const fallbackGeoJsonUrl = 'https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json';
-                let retryCount = 0;
-                
-                function loadAndRenderMap(url) {
-                    fetch(url)
-                        .then(response => {
-                            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                            return response.json();
-                        })
-                        .then(geoJson => {
-                            echarts.registerMap('customChinaMap', geoJson);
-                            renderMap('customChinaMap');
-                        })
-                        .catch(err => {
-                            console.warn('地图数据加载失败，尝试备用源...', err);
-                            if (retryCount === 0) {
-                                retryCount++;
-                                loadAndRenderMap(fallbackGeoJsonUrl);
-                            } else {
-                                mapDom.innerHTML = `
+                // GeoJSON：优先同源文件（线上常见 CSP 禁止连外网 CDN；且旧地址 china.geo.json 在包内不存在会 404）
+                const geoJsonSources = [
+                    'data/china.json',
+                    'https://cdn.jsdelivr.net/npm/china-geojson@1.0.0/src/geojson/china.json',
+                    'https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json'
+                ];
+
+                function tryLoadGeoJson(index) {
+                    if (index >= geoJsonSources.length) {
+                        if (chart && !chart.isDisposed()) chart.dispose();
+                        window._caveMapChart = null;
+                        mapDom.innerHTML = `
                                     <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;background:#faf9f7;border-radius:24px;text-align:center;padding:1.5rem;">
                                         <i class="fas fa-draw-polygon" style="font-size:48px;color:#c68b5e;opacity:0.6;margin-bottom:12px;"></i>
-                                        <p style="color:#8d7a66;font-size:0.9rem;">地图数据加载失败<br>请检查网络后刷新</p>
+                                        <p style="color:#8d7a66;font-size:0.9rem;">地图数据加载失败<br>请确认已上传 data/china.json，或检查网络后刷新</p>
                                         <p style="font-size:0.7rem;color:#b2906e;margin-top:8px;">窑洞核心省份: 山西、陕西、河南、甘肃</p>
                                     </div>
                                 `;
-                            }
+                        return;
+                    }
+                    var url = geoJsonSources[index];
+                    fetch(url)
+                        .then(function (response) {
+                            if (!response.ok) throw new Error('HTTP ' + response.status);
+                            return response.json();
+                        })
+                        .then(function (geoJson) {
+                            echarts.registerMap('customChinaMap', geoJson);
+                            renderMap('customChinaMap');
+                        })
+                        .catch(function (err) {
+                            console.warn('地图数据加载失败，尝试下一数据源...', url, err);
+                            tryLoadGeoJson(index + 1);
                         });
                 }
                 
@@ -644,7 +647,7 @@
                     });
                 }
                 
-                loadAndRenderMap(primaryGeoJsonUrl);
+                tryLoadGeoJson(0);
                 
                 // 保存地图实例以便 resize
                 window._caveMapChart = chart;
