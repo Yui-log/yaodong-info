@@ -5,11 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>窑洞：生长在黄土里的建筑 | 图文数据可视化</title>
     
+    <!-- 外部依赖：ECharts 4.9.0 和 Font Awesome 6.0.0 -->
     <script src="https://cdn.jsdelivr.net/npm/echarts@4.9.0/dist/echarts.min.js"></script>
- 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
     <style>
+        /* ----- 全局重置与基础样式 ----- */
         * {
             margin: 0;
             padding: 0;
@@ -29,7 +30,7 @@
             margin: 0 auto;
         }
 
-        /* 页眉 */
+        /* ----- 页眉区域 ----- */
         .hero {
             text-align: center;
             margin-bottom: 2.5rem;
@@ -61,7 +62,7 @@
             padding-top: 0.5rem;
         }
 
-        /* 主网格：左侧信息/图片 + 右侧气候/图片 */
+        /* ----- 主网格：左右两栏布局 ----- */
         .dashboard {
             display: grid;
             grid-template-columns: 1fr 1.2fr;
@@ -69,7 +70,7 @@
             margin: 2rem 0;
         }
 
-        /* 卡片通用样式 */
+        /* ----- 通用卡片样式 ----- */
         .card {
             background: rgba(255, 252, 240, 0.92);
             border-radius: 2rem;
@@ -97,7 +98,7 @@
             color: #b97f3a;
         }
 
-        /* 基本信息网格 */
+        /* ----- 基本信息网格布局 ----- */
         .info-grid {
             display: flex;
             flex-direction: column;
@@ -120,7 +121,7 @@
             color: #a35c2a;
         }
 
-        /* 引用区块 */
+        /* ----- 引用区块样式 ----- */
         .quote-block {
             background: #f9efdf;
             padding: 1rem 1.5rem;
@@ -156,7 +157,7 @@
             width: 1.4rem;
         }
 
-        /* 图片预留区域公用样式 */
+        /* ----- 图片/画廊预留区域样式 ----- */
         .img-placeholder-grid, .gallery-grid {
             display: flex;
             flex-wrap: wrap;
@@ -192,7 +193,7 @@
             font-size: 0.9rem;
         }
 
-        /* 热工原理预留区 */
+        /* ----- 热工原理预留区域 ----- */
         .thermal-placeholder {
             background: #f5ecdf;
             border-radius: 1.2rem;
@@ -223,14 +224,12 @@
             display: inline-block;
         }
 
-        /* 气候图表样式 */
+        /* ----- 图表与地图容器样式 ----- */
         .chart-container {
             width: 100%;
             height: 340px;
             margin: 0.5rem 0;
         }
-        
-        /* 地图容器样式 - 新增 */
         .map-container {
             width: 100%;
             height: 400px;
@@ -238,7 +237,6 @@
             border-radius: 1rem;
             overflow: hidden;
         }
-        
         .climate-stats {
             display: flex;
             flex-wrap: wrap;
@@ -263,7 +261,7 @@
             margin-top: 0.3rem;
         }
 
-        /* 地图图例样式 - 新增 */
+        /* ----- 地图图例样式 ----- */
         .map-legend {
             display: flex;
             justify-content: center;
@@ -292,7 +290,7 @@
             border: 1px solid #dce3ec;
         }
 
-        /* 底部 */
+        /* ----- 底部声明样式 ----- */
         .footer-note {
             margin-top: 2rem;
             background: #e7d9c8;
@@ -306,6 +304,7 @@
             gap: 0.5rem;
         }
 
+        /* ----- 响应式适配 ----- */
         @media (max-width: 850px) {
             .dashboard {
                 grid-template-columns: 1fr;
@@ -326,41 +325,44 @@
 <body>
 <div class="container">
 
+    <!-- ==================== 页眉区 ==================== -->
     <header class="hero">
-        <h1> 窑洞：生长在黄土里的建筑</h1>
+        <h1>窑洞：生长在黄土里的建筑</h1>
         <p>穴居千年 · 冬暖夏凉 · 黄土高原的生态智慧</p>
         <div class="sub"><i class="fas fa-map-marker-alt"></i> 黄土台塬 · 靠崖式 | 下沉式 | 独立式</div>
     </header>
 
+    <!-- ==================== 主内容网格 ==================== -->
     <section class="dashboard">
-        <!-- 左侧区域：基本信息、书籍引用、三种窑洞类型照片 -->
+        <!-- 左侧面板：三大类型、基本档案、书籍引用、气候数据图表 -->
         <div class="left-panel">
+            <!-- 卡片：窑洞三大类型（图片展示） -->
             <div class="card">
-                <h2><i class="fas fa-camera-retro"></i> 窑洞三大类型 </h2>
+                <h2><i class="fas fa-camera-retro"></i> 窑洞三大类型</h2>
                 <div class="gallery-grid">
                     <div class="gallery-item">
-                       <img src="images/kaoya.jpeg" alt="靠崖式窑洞" 
-                            style="width:100%; height:140px; object-fit:cover; border-radius:0.8rem;">
-                        <div class="gallery-label"> 靠崖式窑洞</div>
+                        <img src="images/kaoya.jpeg" alt="靠崖式窑洞" 
+                             style="width:100%; height:140px; object-fit:cover; border-radius:0.8rem;">
+                        <div class="gallery-label">靠崖式窑洞</div>
                         <div class="img-note">·依山开凿，层次分明</div>
                     </div>
                     <div class="gallery-item">
                         <img src="images/xiachen.jpeg" alt="下沉式窑洞"  
-                            style="width:100%; height:140px; object-fit:cover; border-radius:0.8rem;">
-                        <div class="gallery-label"> 下沉式窑洞 (地坑院)</div>
+                             style="width:100%; height:140px; object-fit:cover; border-radius:0.8rem;">
+                        <div class="gallery-label">下沉式窑洞 (地坑院)</div>
                         <div class="img-note">·地下四合院奇观</div>
                     </div>
                     <div class="gallery-item">
                         <img src="images/duli.jpeg" alt="独立式窑洞" 
-                            style="width:100%; height:140px; object-fit:cover; border-radius:0.8rem;">
-                        <div class="gallery-label"> 独立式锢窑</div>
+                             style="width:100%; height:140px; object-fit:cover; border-radius:0.8rem;">
+                        <div class="gallery-label">独立式锢窑</div>
                         <div class="img-note">·砖石拱券，仿窑形态</div>
                     </div>
                 </div>
                 <p class="img-tip"><i class="fas fa-info-circle"></i> 提示：图片来源于网络。</p>
             </div>
             
-            <!-- 基本信息卡片 -->
+            <!-- 卡片：窑洞基本档案 -->
             <div class="card">
                 <h2><i class="fas fa-archway"></i> 窑洞·基本档案</h2>
                 <div class="info-grid">
@@ -372,26 +374,24 @@
                 </div>
             </div>
 
-           
-   <!-- 书籍/文献引用  -->
-        <div class="card">
-         <h2><i class="fas fa-book-open"></i> 文献&书籍引用</h2>
-    <div class="quote-block">
-        <div class="quote-text">“窑洞不仅是黄土高原的民间建筑，更是中国传统建筑文化的重要组成部分。其营造技艺和聚落形态，体现了人与自然和谐共生的生存智慧。”</div>
-        <div class="quote-author">—— 侯继尧 等《窑洞民居》（中国建筑工业出版社，1989）</div>
-    </div>
-    <div class="quote-block">
-        <div class="quote-text">“下沉式窑洞（地坑院）是黄土高原最具生态智慧的一种聚落形态，‘进村不见房，闻声不见人’，是人类利用地形与气候的杰出范例，但其在当代的发展与保护也面临着诸多困境。”</div>
-        <div class="quote-author">—— 刘海宁《下沉式窑居村落之现状调研与发展展望》（西安建筑科技大学硕士论文，2001）</div>
-    </div>
-    <ul class="book-list">
-        <li><i class="fas fa-quote-right"></i> <strong>《中国窑洞》</strong> · 侯继尧、王军 </li>
-        <li><i class="fas fa-quote-right"></i> <strong>《山西传统窑洞的类型分布与影响因素研究》</strong> · 田毅, 李若彤 / 2025，基于GIS技术解析窑洞分布与自然环境、人文社会的关系。</li>
-       
-    </ul>
+            <!-- 卡片：文献&书籍引用 -->
+            <div class="card">
+                <h2><i class="fas fa-book-open"></i> 文献&书籍引用</h2>
+                <div class="quote-block">
+                    <div class="quote-text">“窑洞不仅是黄土高原的民间建筑，更是中国传统建筑文化的重要组成部分。其营造技艺和聚落形态，体现了人与自然和谐共生的生存智慧。”</div>
+                    <div class="quote-author">—— 侯继尧 等《窑洞民居》（中国建筑工业出版社，1989）</div>
+                </div>
+                <div class="quote-block">
+                    <div class="quote-text">“下沉式窑洞（地坑院）是黄土高原最具生态智慧的一种聚落形态，‘进村不见房，闻声不见人’，是人类利用地形与气候的杰出范例，但其在当代的发展与保护也面临着诸多困境。”</div>
+                    <div class="quote-author">—— 刘海宁《下沉式窑居村落之现状调研与发展展望》（西安建筑科技大学硕士论文，2001）</div>
+                </div>
+                <ul class="book-list">
+                    <li><i class="fas fa-quote-right"></i> <strong>《中国窑洞》</strong> · 侯继尧、王军</li>
+                    <li><i class="fas fa-quote-right"></i> <strong>《山西传统窑洞的类型分布与影响因素研究》</strong> · 田毅, 李若彤 / 2025，基于GIS技术解析窑洞分布与自然环境、人文社会的关系。</li>
+                </ul>
+            </div>     
             
-</div>     
-            <!-- 气候数据双轴图表 -->
+            <!-- 卡片：黄土高原气候数据洞察（双轴图表） -->
             <div class="card">
                 <h2><i class="fas fa-chart-line"></i> 黄土高原·气候数据洞察</h2>
                 <div class="climate-stats">
@@ -408,58 +408,55 @@
                     窑洞适应性：降雨集中于夏季，窑顶防渗与院内集水传统；冬季严寒，厚黄土层提供绝佳保温蓄热。
                 </p>
             </div>
-            
-
         </div>
 
-        <!-- 右侧区域：气候图表 + 地图卡片 + 降雨季节饼图 -->
+        <!-- 右侧面板：历史营造史话 + 窑洞分布地图 + 降雨季节饼图 -->
         <div class="right-panel">
-            <!-- 新增的历史资料卡部分 -->
-<div class="card">
-    <h2><i class="fas fa-landmark"></i> 窑洞营造史话 · 千年穴居智慧</h2>
-    <div class="info-grid">
-        <!-- 纵向时间轴风格呈现历史脉络 -->
-        <div style="display: flex; flex-direction: column; gap: 1rem;">
-            <!-- 史前至先秦 -->
-            <div style="display: flex; gap: 1rem; align-items: flex-start; border-left: 3px solid #c28a4e; padding-left: 1rem;">
-                <div style="min-width: 80px; font-weight: 700; color: #b97f3a;">史前·周秦</div>
-                <div><strong>“凿穴而居”的开端</strong> — 新石器时代仰韶文化遗址（陕西、甘肃）已发现原始横穴、袋状竖穴。周代《诗经·大雅·绵》载：“古公亶父，陶复陶穴，未有家室。” 证明周先民以窑洞为主要居住形态。</div>
+            <!-- 卡片：窑洞营造史话 · 千年穴居智慧 -->
+            <div class="card">
+                <h2><i class="fas fa-landmark"></i> 窑洞营造史话 · 千年穴居智慧</h2>
+                <div class="info-grid">
+                    <!-- 纵向时间轴风格呈现历史脉络 -->
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <!-- 史前至先秦 -->
+                        <div style="display: flex; gap: 1rem; align-items: flex-start; border-left: 3px solid #c28a4e; padding-left: 1rem;">
+                            <div style="min-width: 80px; font-weight: 700; color: #b97f3a;">史前·周秦</div>
+                            <div><strong>“凿穴而居”的开端</strong> — 新石器时代仰韶文化遗址（陕西、甘肃）已发现原始横穴、袋状竖穴。周代《诗经·大雅·绵》载：“古公亶父，陶复陶穴，未有家室。” 证明周先民以窑洞为主要居住形态。</div>
+                        </div>
+                        <!-- 汉唐时期 -->
+                        <div style="display: flex; gap: 1rem; align-items: flex-start; border-left: 3px solid #c28a4e; padding-left: 1rem;">
+                            <div style="min-width: 80px; font-weight: 700; color: #b97f3a;">汉唐·宋金</div>
+                            <div><strong>营造技艺成熟</strong> — 汉代“崖墓”结构影响靠崖窑发展；唐宋时期，北方战乱促使百姓大量挖掘窑洞以避祸，下沉式地坑院在河南、山西开始规模化出现，并形成“地下村落”雏形。</div>
+                        </div>
+                        <!-- 明清至近代 -->
+                        <div style="display: flex; gap: 1rem; align-items: flex-start; border-left: 3px solid #c28a4e; padding-left: 1rem;">
+                            <div style="min-width: 80px; font-weight: 700; color: #b97f3a;">明清·近代</div>
+                            <div><strong>窑洞聚落黄金时代</strong> — 黄土高原人口激增，靠崖窑、地坑院、锢窑三大体系完全定型。晋中、陕北、陇东出现大规模窑洞村落，窑洞营造口诀、风水观念深度融合，《巩县窑洞记》等地方文献详述营建法式。</div>
+                        </div>
+                        <!-- 当代保护与创新 -->
+                        <div style="display: flex; gap: 1rem; align-items: flex-start; border-left: 3px solid #c28a4e; padding-left: 1rem;">
+                            <div style="min-width: 80px; font-weight: 700; color: #b97f3a;">当代·传承</div>
+                            <div><strong>文化遗产与现代再生</strong> — 2008年“窑洞营造技艺”列入国家级非遗；三门峡地坑院、陕北杨家沟窑洞等成为重要文旅地标。现代建筑师提取窑洞“覆土”“拱券”理念，应用于生态住宅设计，获国际能源署（IEA）低碳建筑案例推荐。</div>
+                        </div>
+                    </div>
+                    <!-- 补充一则历史侧写：引用古籍段落 -->
+                    <div class="quote-block" style="margin-top: 1rem; background: #f4e9dc;">
+                        <div class="quote-text">“昔者先王未有宫室，冬则居营窟，夏则居橧巢。”（《礼记·礼运》）—— 营窟即为早期窑洞雏形，数千年来，黄土高原居民凭借对土地特性的理解，创造出冬暖夏凉的理想居所，被誉为“黄土建筑的活化石”。</div>
+                        <div class="quote-author">—— 引自《礼记》及中国建筑史学者 侯继尧 解读</div>
+                    </div>
+                    <!-- 辅助小贴士：历史数字 -->
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 0.5rem;">
+                        <span class="stat-badge"><i class="fas fa-hourglass-half"></i> 窑洞历史：超6000年营造传统</span>
+                        <span class="stat-badge"><i class="fas fa-city"></i> 现存地坑院：豫西约100余座完整村落</span>
+                        <span class="stat-badge"><i class="fas fa-scroll"></i> 最早文字记载：《诗经》“陶复陶穴”</span>
+                    </div>
+                    <div class="data-source" style="margin-top: 0.5rem;">
+                        <i class="fas fa-history"></i> 历史信息综合自《中国窑洞·侯继尧》《陕甘宁窑洞民居研究》及各省文物局资料。
+                    </div>
+                </div>
             </div>
-            <!-- 汉唐时期 -->
-            <div style="display: flex; gap: 1rem; align-items: flex-start; border-left: 3px solid #c28a4e; padding-left: 1rem;">
-                <div style="min-width: 80px; font-weight: 700; color: #b97f3a;">汉唐·宋金</div>
-                <div><strong>营造技艺成熟</strong> — 汉代“崖墓”结构影响靠崖窑发展；唐宋时期，北方战乱促使百姓大量挖掘窑洞以避祸，下沉式地坑院在河南、山西开始规模化出现，并形成“地下村落”雏形。</div>
-            </div>
-            <!-- 明清至近代 -->
-            <div style="display: flex; gap: 1rem; align-items: flex-start; border-left: 3px solid #c28a4e; padding-left: 1rem;">
-                <div style="min-width: 80px; font-weight: 700; color: #b97f3a;">明清·近代</div>
-                <div><strong>窑洞聚落黄金时代</strong> — 黄土高原人口激增，靠崖窑、地坑院、锢窑三大体系完全定型。晋中、陕北、陇东出现大规模窑洞村落，窑洞营造口诀、风水观念深度融合，《巩县窑洞记》等地方文献详述营建法式。</div>
-            </div>
-            <!-- 当代保护与创新 -->
-            <div style="display: flex; gap: 1rem; align-items: flex-start; border-left: 3px solid #c28a4e; padding-left: 1rem;">
-                <div style="min-width: 80px; font-weight: 700; color: #b97f3a;">当代·传承</div>
-                <div><strong>文化遗产与现代再生</strong> — 2008年“窑洞营造技艺”列入国家级非遗；三门峡地坑院、陕北杨家沟窑洞等成为重要文旅地标。现代建筑师提取窑洞“覆土”“拱券”理念，应用于生态住宅设计，获国际能源署（IEA）低碳建筑案例推荐。</div>
-            </div>
-        </div>
-        <!-- 补充一则历史侧写：引用古籍段落 -->
-        <div class="quote-block" style="margin-top: 1rem; background: #f4e9dc;">
-            <div class="quote-text">“昔者先王未有宫室，冬则居营窟，夏则居橧巢。”（《礼记·礼运》）—— 营窟即为早期窑洞雏形，数千年来，黄土高原居民凭借对土地特性的理解，创造出冬暖夏凉的理想居所，被誉为“黄土建筑的活化石”。</div>
-            <div class="quote-author">—— 引自《礼记》及中国建筑史学者 侯继尧 解读</div>
-        </div>
-        <!-- 添加一个辅助小贴士：历史数字 -->
-        <div style="display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 0.5rem;">
-            <span class="stat-badge"><i class="fas fa-hourglass-half"></i> 窑洞历史：超6000年营造传统</span>
-            <span class="stat-badge"><i class="fas fa-city"></i> 现存地坑院：豫西约100余座完整村落</span>
-            <span class="stat-badge"><i class="fas fa-scroll"></i> 最早文字记载：《诗经》“陶复陶穴”</span>
-        </div>
-        <div class="data-source" style="margin-top: 0.5rem;">
-            <i class="fas fa-history"></i> 历史信息综合自《中国窑洞·侯继尧》《陕甘宁窑洞民居研究》及各省文物局资料。
-        </div>
-    </div>
-</div>
             
-
-            <!-- ★ 地图卡片 - 整合自 dstest1.html 的极简地图 ★ -->
+            <!-- 卡片：窑洞分布区域（ECharts 地图） -->
             <div class="card">
                 <h2><i class="fas fa-map-marked-alt"></i> 窑洞分布区域</h2>
                 <div id="caveMapContainer" class="map-container"></div>
@@ -474,12 +471,11 @@
                     </div>
                 </div>
                 <div class="data-source">
-                    <i class="fas fa-map"></i> 数据来源：基于国家基础地理信息中心数据 |
-
+                    <i class="fas fa-map"></i> 数据来源：基于国家基础地理信息中心数据
                 </div>
             </div>
 
-            <!-- 降雨季节分配饼图 -->
+            <!-- 卡片：窑居区降雨季节分配（饼图） -->
             <div class="card">
                 <h2><i class="fas fa-chart-pie"></i> 窑居区降雨季节分配</h2>
                 <div id="seasonalRainChart" style="height: 260px; width: 100%;"></div>
@@ -487,11 +483,10 @@
                     <i class="fas fa-cloud-sun-rain"></i> 数据基于黄土高原水资源公报 / 陕西气象局，夏季(6-8月)降水占全年55%以上。
                 </div>
             </div>
-
         </div>
     </section>
 
-    <!-- 底部声明 -->
+    <!-- ==================== 底部声明区 ==================== -->
     <div class="footer-note">
         <span><i class="fas fa-check-circle"></i> 气候数据源：<a href="https://data.cma.cn" target="_blank" rel="noopener noreferrer">中国气象数据网 data.cma.cn</a> | <a href="https://climateknowledgeportal.worldbank.org" target="_blank" rel="noopener noreferrer">世界银行气候知识门户</a></span>
         <span><i class="fas fa-map"></i> 窑洞信息参考：《中国民居建筑》《黄土建筑与村落》及CNKI学术论文</span>
@@ -501,10 +496,10 @@
 
 <script>
     (function() {
-        // 等待 DOM 加载完成
+        // 等待 DOM 完全加载
         window.addEventListener('load', function() {
             
-            // ========== 1. 气候图表 ==========
+            // ==================== 1. 气候双轴图表（月均温 + 月均降雨） ====================
             var months = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
             var monthlyRain = [4.5, 6.8, 15.2, 28.5, 48.2, 68.5, 112.3, 103.7, 72.5, 38.4, 14.2, 3.9];
             var monthlyTemp = [-5.2, -1.8, 4.6, 12.1, 17.8, 22.3, 24.5, 23.1, 17.5, 10.6, 2.9, -3.4];
@@ -527,7 +522,7 @@
             };
             mainChart.setOption(mainOption);
             
-            // ========== 2. 季节降雨饼图 ==========
+            // ==================== 2. 季节降雨饼图 ====================
             let spring = monthlyRain[2] + monthlyRain[3] + monthlyRain[4];
             let summer = monthlyRain[5] + monthlyRain[6] + monthlyRain[7];
             let autumn = monthlyRain[8] + monthlyRain[9] + monthlyRain[10];
@@ -551,7 +546,7 @@
             };
             pieChart.setOption(pieOption);
             
-            // ========== 3. 极简地图 - 整合自 dstest1.html ==========
+            // ==================== 3. 极简中国地图（高亮窑洞分布省份） ====================
             initCaveMap();
             
             function initCaveMap() {
@@ -568,7 +563,7 @@
                 
                 const chart = echarts.init(mapDom);
                 
-                // GeoJSON：优先同源文件（线上常见 CSP 禁止连外网 CDN；且旧地址 china.geo.json 在包内不存在会 404）
+                // 地图数据源列表（优先尝试本地 data/china.json，其次备用 CDN）
                 const geoJsonSources = [
                     'data/china.json',
                     'https://cdn.jsdelivr.net/npm/china-geojson@1.0.0/src/geojson/china.json',
@@ -580,12 +575,12 @@
                         if (chart && !chart.isDisposed()) chart.dispose();
                         window._caveMapChart = null;
                         mapDom.innerHTML = `
-                                    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;background:#faf9f7;border-radius:24px;text-align:center;padding:1.5rem;">
-                                        <i class="fas fa-draw-polygon" style="font-size:48px;color:#c68b5e;opacity:0.6;margin-bottom:12px;"></i>
-                                        <p style="color:#8d7a66;font-size:0.9rem;">地图数据加载失败<br>请确认已上传 data/china.json，或检查网络后刷新</p>
-                                        <p style="font-size:0.7rem;color:#b2906e;margin-top:8px;">窑洞核心省份: 山西、陕西、河南、甘肃</p>
-                                    </div>
-                                `;
+                            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;background:#faf9f7;border-radius:24px;text-align:center;padding:1.5rem;">
+                                <i class="fas fa-draw-polygon" style="font-size:48px;color:#c68b5e;opacity:0.6;margin-bottom:12px;"></i>
+                                <p style="color:#8d7a66;font-size:0.9rem;">地图数据加载失败<br>请确认已上传 data/china.json，或检查网络后刷新</p>
+                                <p style="font-size:0.7rem;color:#b2906e;margin-top:8px;">窑洞核心省份: 山西、陕西、河南、甘肃</p>
+                            </div>
+                        `;
                         return;
                     }
                     var url = geoJsonSources[index];
@@ -640,7 +635,7 @@
                                 const name = params.name;
                                 const isCave = fullNames.some(p => name === p.full || name === p.short);
                                 if (isCave) {
-                                    return `<strong> ${name}</strong><br/> 窑洞传统分布区<br/>靠崖窑 · 地坑院 · 独立式锢窑`;
+                                    return `<strong>${name}</strong><br/>窑洞传统分布区<br/>靠崖窑 · 地坑院 · 独立式锢窑`;
                                 }
                                 return name;
                             }
@@ -663,68 +658,3 @@
                                 emphasis: {
                                     areaColor: '#f9e5d4',
                                     borderWidth: 1.2,
-                                    borderColor: '#bb7a56',
-                                    label: { show: true, color: '#5d3a2a', fontWeight: '500', fontSize: 11 }
-                                }
-                            },
-                            data: seriesData,
-                            label: {
-                                normal: { show: false },
-                                emphasis: { show: true, fontSize: 11, color: '#2c1a0c' }
-                            }
-                        }],
-                        backgroundColor: 'transparent'
-                    };
-                    
-                    chart.setOption(option, true);
-                    chart.resize();
-                    
-                    chart.off('click');
-                    chart.on('click', function(params) {
-                        if (params.componentType === 'series' && params.name) {
-                            const provName = params.name;
-                            const isCaveProvince = fullNames.some(p => provName === p.full || provName === p.short);
-                            if (isCaveProvince) {
-                                console.log(` 窑洞文化区: ${provName}`);
-                            }
-                        }
-                    });
-                }
-                
-                tryLoadGeoJson(0);
-                
-                // 保存地图实例以便 resize
-                window._caveMapChart = chart;
-            }
-
-            // ========== 窗口自适应 ==========
-            window.addEventListener('resize', function() {
-                if (mainChart && !mainChart.isDisposed()) mainChart.resize();
-                if (pieChart && !pieChart.isDisposed()) pieChart.resize();
-                if (window._caveMapChart && !window._caveMapChart.isDisposed()) {
-                    window._caveMapChart.resize();
-                }
-            });
-            
-            setTimeout(() => {
-                if (window._caveMapChart && !window._caveMapChart.isDisposed()) {
-                    window._caveMapChart.resize();
-                }
-            }, 200);
-
-            // ========== 页脚年份动态 ==========
-            let year = new Date().getFullYear();
-            let footerNote = document.querySelector('.footer-note');
-            if (footerNote) {
-                let yearSpan = document.createElement('span');
-                yearSpan.innerHTML = `<i class="far fa-calendar-alt"></i> 数据可视化 · 窑洞气候适应性展示 ${year}`;
-                footerNote.appendChild(yearSpan);
-            }
-            
-            console.log('窑洞可视化已加载，地图整合完成。');
-        });
-    })();
-</script>
-
-</body>
-</html>
