@@ -658,3 +658,65 @@
                                 emphasis: {
                                     areaColor: '#f9e5d4',
                                     borderWidth: 1.2,
+                                    borderColor: '#bb7a56',
+                                    label: { show: true, color: '#5d3a2a', fontWeight: '500', fontSize: 11 }
+                                }
+                            },
+                            data: seriesData,
+                            label: {
+                                normal: { show: false },
+                                emphasis: { show: true, fontSize: 11, color: '#2c1a0c' }
+                            }
+                        }],
+                        backgroundColor: 'transparent'
+                    };
+                    
+                    chart.setOption(option, true);
+                    chart.resize();
+                    
+                    chart.off('click');
+                    chart.on('click', function(params) {
+                        if (params.componentType === 'series' && params.name) {
+                            const provName = params.name;
+                            const isCaveProvince = fullNames.some(p => provName === p.full || provName === p.short);
+                            if (isCaveProvince) {
+                                console.log(`窑洞文化区: ${provName}`);
+                            }
+                        }
+                    });
+                }
+                
+                tryLoadGeoJson(0);
+                window._caveMapChart = chart;
+            }
+
+            // ==================== 4. 窗口自适应 ====================
+            window.addEventListener('resize', function() {
+                if (mainChart && !mainChart.isDisposed()) mainChart.resize();
+                if (pieChart && !pieChart.isDisposed()) pieChart.resize();
+                if (window._caveMapChart && !window._caveMapChart.isDisposed()) {
+                    window._caveMapChart.resize();
+                }
+            });
+            
+            setTimeout(() => {
+                if (window._caveMapChart && !window._caveMapChart.isDisposed()) {
+                    window._caveMapChart.resize();
+                }
+            }, 200);
+
+            // 底部动态添加年份
+            let year = new Date().getFullYear();
+            let footerNote = document.querySelector('.footer-note');
+            if (footerNote) {
+                let yearSpan = document.createElement('span');
+                yearSpan.innerHTML = `<i class="far fa-calendar-alt"></i> 数据可视化 · 窑洞气候适应性展示 ${year}`;
+                footerNote.appendChild(yearSpan);
+            }
+            
+            console.log('窑洞可视化已加载，地图整合完成。');
+        });
+    })();
+</script>
+</body>
+</html>
